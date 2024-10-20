@@ -5,8 +5,10 @@ import feedparser
 feed_list = [
     "https://pluralistic.net/feed/",
     "https://www.lawdork.com/feed",
-    "https://talkingpointsmemo.com/feed",
+    # "https://talkingpointsmemo.com/feed",
     "https://talkingpointsmemo.com/edblog/feed",
+    "https://digbysblog.net/feed/",
+    "https://www.propublica.org/feeds/propublica/main",
 ]
 
 feed = feedparser.parse(feed_list[0])
@@ -54,5 +56,7 @@ entry['title']
 entry['title_detail']
 entry['']
 
-for e in feed2.entries:
+fetch_id = 1
+for e in feed.entries:
     print(e.title)
+    add_item(con, fetch_id, e.title, e.author, e.summary)
