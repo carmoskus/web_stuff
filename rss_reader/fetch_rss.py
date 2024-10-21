@@ -1,6 +1,8 @@
 #
 
-import feedparser
+import feedparser, time, sqlite3
+
+
 
 feed_list = [
     "https://pluralistic.net/feed/",
@@ -9,10 +11,27 @@ feed_list = [
     "https://talkingpointsmemo.com/edblog/feed",
     "https://digbysblog.net/feed/",
     "https://www.propublica.org/feeds/propublica/main",
+    "https://alamedapost.com/feed/",
+    "https://www.readtpa.com/feed"
 ]
 
+parsed_list = [feedparser.parse(x) for x in feed_list]
+
+[x.keys() for x in parsed_list]
+[x.feed.keys() for x in parsed_list]
+
+[x.bozo for x in parsed_list]
+
+# fetch utime
+[int(time.mktime(x.feed.updated_parsed)) for x in parsed_list]
+
+[x.entries[0].keys() for x in parsed_list]
+# item url
+[x.entries[0].id for x in parsed_list]
+
+
 feed = feedparser.parse(feed_list[0])
-feed2 = feedparser.parse("")
+feed2 = feedparser.parse("https://www.readtpa.com/feed")
 
 print(feed)
 len(feed)

@@ -8,11 +8,13 @@ import sqlite3
 # item: a single rss entry or other bit retrieved and to be noted/tagged
 
 # source: type, url, status
-# fetch: source_id, time, 
+# fetch: source_id, dbtime, utime
 # item: fetch_id, title, author, summary
 
 # source type: rss, mastodon, 
 # source status: 0 = disabled, 1 = enabled, maybe others
+# fetch status: 0 = failure, 1 = success, 2 = in progress,
+# item status: 0 = disabled, 1 = normal, 2 = ignored, 
 
 def mk_fresh(con):
     cur = con.cursor()
@@ -31,7 +33,9 @@ def mk_fresh(con):
     CREATE TABLE fetch (
         fetch_id INTEGER PRIMARY KEY,
         source_id INTEGER NOT NULL,
-        time INTEGER DEFAULT (unixepoch()) NOT NULL,
+        dbtime INTEGER DEFAULT (unixepoch()) NOT NULL,
+        utime INTEGER,
+        status INTEGER DEFAULT (2) NOT NULL,
         FOREIGN KEY (source_id) REFERENCES source (source_id)
     );
     ''')
@@ -41,9 +45,11 @@ def mk_fresh(con):
     CREATE TABLE item (
         item_id INTEGER PRIMARY KEY,
         fetch_id INTEGER NOT NULL,
+        url TEXT NOT NULL,
         title TEXT NOT NULL,
         author TEXT NOT NULL,
         summary TEXT NOT NULL,
+        status INTEGER DEFAULT (1) NOT NULL,
         FOREIGN KEY (fetch_id) REFERENCES fetch (fetch_id)
     );
     ''')
