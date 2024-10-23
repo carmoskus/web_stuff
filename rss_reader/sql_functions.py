@@ -1,4 +1,4 @@
-import sqlite3
+import sqlite3, time, feedparser
 
 # Tables
 # source: details for where info is fetched from, an rss feed or something else
@@ -7,7 +7,7 @@ import sqlite3
 # note: a tag or comment on an item
 
 # source: type, url, status
-# fetch: source_id, dbtime, utime, status
+# fetch: source_id, dbtime, stime, status
 # item: fetch_id, url, title, author, summary, status
 # note: item_id, tag, content, status
 
@@ -31,14 +31,14 @@ def mk_fresh(con):
     );
     ''')
 
-    # fetch: source_id, dbtime, utime, status
+    # fetch: source_id, dbtime, stime, status
     cur.execute('DROP TABLE IF EXISTS fetch;')
     cur.execute('''
     CREATE TABLE fetch (
         fetch_id INTEGER PRIMARY KEY,
         source_id INTEGER NOT NULL,
         dbtime INTEGER DEFAULT (unixepoch()) NOT NULL,
-        utime INTEGER,
+        stime INTEGER,
         status INTEGER DEFAULT (2) NOT NULL,
         FOREIGN KEY (source_id) REFERENCES source (source_id)
     );
@@ -76,21 +76,61 @@ def add_source(con, source_type: str, url: str):
     cur = con.cursor()
     cur.execute('INSERT INTO source (type, url) VALUES (?, ?)', (source_type, url))
     con.commit()
-    res = cur.execute('SELECT source_id FROM source WHERE rowid = last_insert_rowid()').fetchall()
+    res = cur.execute('SELECT source_id FROM source WHERE rowid = last_insert_rowid()').fetchone()
     return res[0]
+def add_fetch(con, source_id: int, status: int, stime: int | None):
+    cur = con.cursor()
+    cur.execute('INSERT INTO fetch (source_id, status, stime) VALUES (?, ?, ?)', (source_id, status, stime, ))
+    con.commit()
+    res = cur.execute('SELECT fetch_id FROM fetch WHERE rowid = last_insert_rowid()').fetchone()
+    return res[0]
+def add_item(con, fetch_id: int, url: str, title: str, author: str, summary: str):
+    cur = con.cursor()
+    cur.execute('INSERT INTO item (fetch_id, url, title, author, summary) VALUES (?, ?, ?, ?, ?)', 
+                (fetch_id, url, title, author, summary))
+    con.commit()
+    res = cur.execute('SELECT item_id FROM item WHERE rowid = last_insert_rowid()').fetchone()
+    return res[0]
+def add_note(con, item_id: int, tag: str, content: str):
+    cur = con.cursor()
+    cur.execute('INSERT INTO note (item_id, tag, content) VALUES (?, ?, ?)', 
+                (item_id, tag, content))
+    con.commit()
+    res = cur.execute('SELECT note_id FROM note WHERE rowid = last_insert_rowid()').fetchone()
+    return res[0]
+
+
+def get_rss_source_ids(con):
+    cur = con.cursor()
+    return [x[0] for x in cur.execute('SELECT source_id FROM source WHERE type = "rss"').fetchall()]
 def get_rss_sources(con):
     cur = con.cursor()
     return cur.execute('SELECT source_id, url FROM source WHERE type = "rss"').fetchall()
-def add_fetch(con, source_id: int):
+def get_source_url(con, source_id: int):
     cur = con.cursor()
-    cur.execute('INSERT INTO fetch (source_id) VALUES (?)', (source_id,))
-    con.commit()
-    res = cur.execute('SELECT fetch_id FROM fetch WHERE rowid = last_insert_rowid()').fetchall()
-    return res[0]
-def add_item(con, fetch_id: int, title: str, author: str, summary: str):
-    cur = con.cursor()
-    cur.execute('INSERT INTO item (fetch_id, title, author, summary) VALUES (?, ?, ?, ?)', 
-                (fetch_id, title, author, summary))
-    con.commit()
-    res = cur.execute('SELECT item_id FROM item WHERE rowid = last_insert_rowid()').fetchall()
-    return res[0]
+    return cur.execute('SELECT url FROM source WHERE source_id = ?', (source_id, )).fetchone()[0]
+
+
+def run_fetch(con, source_id: int):
+    url = get_source_url(con, source_id)
+    print(url)
+    feed = feedparser.parse(url)
+    if feed.bozo:
+        print(f"BOZO: {url}")
+        return add_fetch(con, source_id, 2, None)
+    
+    # Get source last updated time
+    stime = None
+    try:
+        stime = int(time.mktime(feed.feed.updated_parsed))
+    except AttributeError:
+        pass
+
+    # Add fetch entry
+    fetch_id = add_fetch(con, source_id, 1, stime)
+
+    # Add items
+    for entry in feed.entries:
+        add_item(con, fetch_id, entry.id, entry.title, entry.author, entry.summary)
+    
+    return fetch_id

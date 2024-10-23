@@ -3,7 +3,7 @@
 import sqlite3
 
 import sql_functions as my
-
+from importlib import reload
 
 # Initialize sqlite
 db_filename = "fetched.db"
@@ -20,4 +20,8 @@ feed_list = [
     "https://www.propublica.org/feeds/propublica/main",
 ]
 new_sources = [my.add_source(con, 'rss', x) for x in feed_list]
+print(new_sources)
 
+reload(my)
+for source_id in new_sources:
+    my.run_fetch(con, source_id)
