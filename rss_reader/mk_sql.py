@@ -6,15 +6,18 @@ import sqlite3
 # source: details for where info is fetched from, an rss feed or something else
 # fetch: a specific update of a specific feed
 # item: a single rss entry or other bit retrieved and to be noted/tagged
+# note: a tag or comment on an item
 
 # source: type, url, status
-# fetch: source_id, dbtime, utime
-# item: fetch_id, title, author, summary
+# fetch: source_id, dbtime, utime, status
+# item: fetch_id, url, title, author, summary, status
+# note: item_id, tag, content, status
 
 # source type: rss, mastodon, 
-# source status: 0 = disabled, 1 = enabled, maybe others
-# fetch status: 0 = failure, 1 = success, 2 = in progress,
-# item status: 0 = disabled, 1 = normal, 2 = ignored, 
+# source status: 0 = disabled, 1 = enabled, 2 = troubled, 
+# fetch status: 0 = disabled, 1 = success, 2 = failure, 3 = in progress,
+# item status: 0 = disabled, 1 = normal, 2 = ignored, 3 = liked, 
+# note status: 
 
 def mk_fresh(con):
     cur = con.cursor()
