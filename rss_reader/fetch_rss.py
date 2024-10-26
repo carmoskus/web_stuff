@@ -2,7 +2,10 @@
 
 import feedparser, time, sqlite3
 
+import sql_functions as my
 
+# from importlib import reload
+# reload(my)
 
 feed_list = [
     "https://pluralistic.net/feed/",
