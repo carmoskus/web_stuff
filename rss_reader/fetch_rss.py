@@ -53,6 +53,48 @@ for k, v in feed.items():
 # version <class 'str'>
 # namespaces <class 'dict'>
 
+for k, v in feed.feed.items():
+    print(k, type(v))
+
+# title <class 'str'>
+# title_detail <class 'feedparser.util.FeedParserDict'>
+# links <class 'list'>
+# link <class 'str'>
+# subtitle <class 'str'>
+# subtitle_detail <class 'feedparser.util.FeedParserDict'>
+# updated <class 'str'>
+# updated_parsed <class 'time.struct_time'>
+# language <class 'str'>
+# sy_updateperiod <class 'str'>
+# sy_updatefrequency <class 'str'>
+# generator_detail <class 'feedparser.util.FeedParserDict'>
+# generator <class 'str'>
+# image <class 'feedparser.util.FeedParserDict'>
+# site <class 'str'>
+
+for k, v in feed.entries[0].items():
+    print(k, type(v))
+
+# title <class 'str'>
+# title_detail <class 'feedparser.util.FeedParserDict'>
+# links <class 'list'>
+# link <class 'str'>
+# comments <class 'str'>
+# authors <class 'list'>
+# author <class 'str'>
+# author_detail <class 'feedparser.util.FeedParserDict'>
+# published <class 'str'>
+# published_parsed <class 'time.struct_time'>
+# tags <class 'list'>
+# id <class 'str'>
+# guidislink <class 'bool'>
+# summary <class 'str'>
+# summary_detail <class 'feedparser.util.FeedParserDict'>
+# content <class 'list'>
+# wfw_commentrss <class 'str'>
+# slash_comments <class 'str'>
+# post-id <class 'str'>
+
 feed['etag']
 feed['updated']
 feed['href']

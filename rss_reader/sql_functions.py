@@ -1,4 +1,11 @@
 import sqlite3, time, feedparser
+from collections import namedtuple
+
+def namedtuple_factory(cursor, row):
+    """Returns sqlite rows as named tuples."""
+    fields = [col[0] for col in cursor.description]
+    Row = namedtuple("Row", fields)
+    return Row(*row)
 
 # Tables
 # source: details for where info is fetched from, an rss feed or something else
@@ -27,6 +34,7 @@ def mk_fresh(con):
         source_id INTEGER PRIMARY KEY,
         type TEXT NOT NULL,
         url TEXT NOT NULL,
+        dbtime INTEGER DEFAULT (unixepoch()) NOT NULL,
         status INTEGER DEFAULT (1) NOT NULL
     );
     ''')
@@ -37,8 +45,8 @@ def mk_fresh(con):
     CREATE TABLE fetch (
         fetch_id INTEGER PRIMARY KEY,
         source_id INTEGER NOT NULL,
-        dbtime INTEGER DEFAULT (unixepoch()) NOT NULL,
         stime INTEGER,
+        dbtime INTEGER DEFAULT (unixepoch()) NOT NULL,
         status INTEGER DEFAULT (2) NOT NULL,
         FOREIGN KEY (source_id) REFERENCES source (source_id)
     );
@@ -54,6 +62,8 @@ def mk_fresh(con):
         title TEXT NOT NULL,
         author TEXT NOT NULL,
         summary TEXT NOT NULL,
+        stime INTEGER,
+        dbtime INTEGER DEFAULT (unixepoch()) NOT NULL,
         status INTEGER DEFAULT (1) NOT NULL,
         FOREIGN KEY (fetch_id) REFERENCES fetch (fetch_id)
     );
@@ -110,6 +120,14 @@ def get_source_url(con, source_id: int):
     cur = con.cursor()
     return cur.execute('SELECT url FROM source WHERE source_id = ?', (source_id, )).fetchone()[0]
 
+def get_items(con, n:int = 10):
+    cur = con.cursor()
+    cur.row_factory = namedtuple_factory
+    # ORDER BY DESC dbtime 
+    return cur.execute('''
+        SELECT item_id, fetch_id, url, title, author, summary, status 
+        FROM item WHERE status = 1 LIMIT ?
+    ''', (n, )).fetchall()
 
 def run_fetch(con, source_id: int):
     url = get_source_url(con, source_id)
