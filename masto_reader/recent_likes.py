@@ -1,11 +1,12 @@
 #
 
 import requests
+from bs4 import BeautifulSoup
 
 # url = "https://mastodon.online/api/v1/accounts/111183843398906311" # account
 # url = "https://mastodon.online/api/v1/accounts/111183843398906311/following" # following
 # url = "https://mastodon.online/api/v1/accounts/111183843398906311/lists" # lists (needs login)
-url = "https://mastodon.online/api/v1/accounts/111183843398906311/statuses?limit=3" # statuses
+url = "https://mastodon.online/api/v1/accounts/111183843398906311/statuses?limit=10" # statuses
 
 r = requests.get(url)
 r
@@ -53,7 +54,60 @@ j[0]['reblog']['created_at']
 j[0]['content']
 j[0]['reblog']['content']
 
+html_txt = j[6]['reblog']['content']
+soup = BeautifulSoup(html_txt, 'html.parser')
+
+soup
+
+soup_list = [BeautifulSoup(e['reblog']['content'], 'html.parser') for e in j if e['reblog'] is not None]
+
+for i, soup in enumerate(soup_list):
+    print(i)
+    for a in soup.find_all('a'):
+        a_class = a.get('class')
+        # TODO: add check that href actually exists
+        if a_class is not None and ('mention' in a_class or 'hashtag' in a_class):
+            continue
+        print(a['href'])
+        print(soup.get_text())
+
+for i, soup in enumerate(soup_list):
+    main_links = [a for a in soup.find_all('a') 
+                  if a.get('class') is None or 
+                  ('mention' not in a.get('class') and 'hashtag' not in a.get('class') )]
+    print(i, len(main_links))
+    if len(main_links) == 1:
+        a = main_links[0]
+        print(soup.get_text())
+        print(a['href'])
+    elif len(main_links) > 1:
+        print('ERROR:', main_links)
+    else:
+        soup.get_text()
+
+for i, soup in enumerate(soup_list):
+    main_links = []
+    for a in soup.find_all('a'):
+        a_class = a.get('class')
+        # TODO: add check that href actually exists
+        if a_class is not None and ('mention' in a_class or 'hashtag' in a_class):
+            a.decompose()
+            continue
+        main_links.append(a)
+    print(i, len(main_links))
+    if len(main_links) == 1:
+        a = main_links[0]
+        # print(soup.get_text())
+        # print(a['href'])
+    elif len(main_links) > 1:
+        print('ERROR:', main_links)
+    else:
+        soup.get_text()
+
+
 j[0]['reblog']
+j[0]['reblog']['reblog']
+
 j[0]['reblog'].keys()
 for k, v in j[0]['reblog'].items():
     print(k, type(v))
