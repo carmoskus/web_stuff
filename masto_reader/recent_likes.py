@@ -54,36 +54,12 @@ j[0]['reblog']['created_at']
 j[0]['content']
 j[0]['reblog']['content']
 
-html_txt = j[6]['reblog']['content']
+html_txt = j[5]['reblog']['content']
 soup = BeautifulSoup(html_txt, 'html.parser')
 
 soup
 
 soup_list = [BeautifulSoup(e['reblog']['content'], 'html.parser') for e in j if e['reblog'] is not None]
-
-for i, soup in enumerate(soup_list):
-    print(i)
-    for a in soup.find_all('a'):
-        a_class = a.get('class')
-        # TODO: add check that href actually exists
-        if a_class is not None and ('mention' in a_class or 'hashtag' in a_class):
-            continue
-        print(a['href'])
-        print(soup.get_text())
-
-for i, soup in enumerate(soup_list):
-    main_links = [a for a in soup.find_all('a') 
-                  if a.get('class') is None or 
-                  ('mention' not in a.get('class') and 'hashtag' not in a.get('class') )]
-    print(i, len(main_links))
-    if len(main_links) == 1:
-        a = main_links[0]
-        print(soup.get_text())
-        print(a['href'])
-    elif len(main_links) > 1:
-        print('ERROR:', main_links)
-    else:
-        soup.get_text()
 
 for i, soup in enumerate(soup_list):
     main_links = []
@@ -97,12 +73,18 @@ for i, soup in enumerate(soup_list):
     print(i, len(main_links))
     if len(main_links) == 1:
         a = main_links[0]
-        # print(soup.get_text())
-        # print(a['href'])
+        a_href = a['href']
+        a_text = a.get_text()
+        a.decompose()
+        parsed_txt = " ".join(x for x in soup.get_text("\n").split("\n") if x != "")
+        print(a_href)
+        print(parsed_txt)
     elif len(main_links) > 1:
         print('ERROR:', main_links)
     else:
-        soup.get_text()
+        parsed_txt = " ".join(x for x in soup.get_text("\n").split("\n") if x != "")
+        print(parsed_txt)
+    print()
 
 
 j[0]['reblog']
