@@ -83,7 +83,7 @@ def parse_soup(soup):
     # Return based on how many links we parsed
     if len(main_links) == 1:
         a = main_links[0]
-        print("---", a)
+        # print("---", a)
         # Work on shortening the displayed text for the url
         a_href = a['href']
         # a_text = a.get_text() # Is the text inside the link ever useful?
@@ -94,11 +94,18 @@ def parse_soup(soup):
         return 1, a_href, parsed_txt
     if len(main_links) > 1:
         # Might break tie if one of the links has an old date
-        print('ERROR:', main_links)
-        return len(main_links), 
+        # print('ERROR:', main_links)
+        a_hrefs = [a['href'] for a in main_links]
+        for a in main_links: 
+            a.decompose()
+        parsed_txt = " ".join(x.strip() for x in soup.get_text("\n").split("\n") if x.strip() != "")
+        parsed_txt = parsed_txt.replace(" # ", " ")
+        return len(main_links), a_hrefs, parsed_txt
     parsed_txt = " ".join(x.strip() for x in soup.get_text("\n").split("\n") if x.strip() != "")
-    parsed_txt = parsed_txt.replace(" # ", " #")
+    parsed_txt = parsed_txt.replace(" # ", " ")
     return 0, parsed_txt
+
+
 
 """ 
 Function to get boosts from one day before given date
@@ -115,29 +122,53 @@ def get_daily_boosts(acc_id: str, my_date, max_id: str = ''):
         return
     
     json = req.json()
-    # TODO return to 1 day after testing
-    one_day_before = my_date - timedelta(days=4)
+    one_day_before = my_date - timedelta(days=1)
     dates = [datetime.fromisoformat(x['created_at']).date() for x in json]
     used = [e for d, e in zip(dates, json) 
             if d < my_date and d >= one_day_before and e['reblog'] is not None]
+    results = []
     for entry in used:
         nm = entry['reblog']['account']['username']
         e_url = entry['reblog']['url']
         nm_txt = f"[{nm}]({e_url})"
         soup = BeautifulSoup(entry['reblog']['content'], 'html.parser')
         parsed = parse_soup(soup)
-        if parsed[0] == 0:
-            print(nm_txt)
-            print('>', parsed[1])
-        elif parsed[0] == 1:
-            print(nm_txt, '-', "<"+parsed[1]+">")
-            print('>', parsed[2])
+        results.append((nm_txt, ) + parsed)
+        # if parsed[0] == 0:
+        #     print(nm_txt)
+        #     print('>', parsed[1])
+        # elif parsed[0] == 1:
+        #     print(nm_txt, '-', "<"+parsed[1]+">")
+        #     print('>', parsed[2])
+        # else:
+        #     print(nm_txt, '???')
+        # print()
+    # Check if the oldest entry we pulled is before one_day_before
+    if dates[-1] < one_day_before:
+        # Then we are finished
+        return results
+    new_max_id = json[-1]['id']
+    return results + get_daily_boosts(acc_id, my_date, new_max_id)
+
+resX = get_daily_boosts('111183843398906311', datetime.now().date() - timedelta(days=-1))
+res_list = [get_daily_boosts('111183843398906311', datetime.now().date() - timedelta(days=i))
+            for i in range(5)]
+for i, res in enumerate(res_list):
+    print(i, "---")
+    for parsed in res[::-1]:
+        if parsed[1] == 0:
+            print(parsed[0])
+            print('>', parsed[2].replace('<', '\<'))
+        elif parsed[1] == 1:
+            print(parsed[0])
+            print('<'+parsed[2]+'>')
+            print('>', parsed[3].replace('<', '\<'))
         else:
-            print(nm_txt, '???')
+            print(parsed[0])
+            for a_href in parsed[2]:
+                print('<'+a_href+'>')
+            print('>', parsed[3].replace('<', '\<'))
         print()
-
-get_daily_boosts('111183843398906311', datetime.now().date() - timedelta(days=0))
-
 
 
 
