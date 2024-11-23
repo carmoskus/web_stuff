@@ -153,21 +153,23 @@ def get_daily_boosts(acc_id: str, my_date, max_id: str = ''):
 resX = get_daily_boosts('111183843398906311', datetime.now().date() - timedelta(days=-1))
 res_list = [get_daily_boosts('111183843398906311', datetime.now().date() - timedelta(days=i))
             for i in range(5)]
+def md_escape_text(parsed_string: str):
+    return parsed_string.replace('<', '\<').replace('#', '\#')
 for i, res in enumerate(res_list):
     print(i, "---")
     for parsed in res[::-1]:
         if parsed[1] == 0:
             print(parsed[0])
-            print('>', parsed[2].replace('<', '\<'))
+            print('>', md_escape_text(parsed[2]))
         elif parsed[1] == 1:
             print(parsed[0])
             print('<'+parsed[2]+'>')
-            print('>', parsed[3].replace('<', '\<'))
+            print('>', md_escape_text(parsed[3]))
         else:
             print(parsed[0])
             for a_href in parsed[2]:
                 print('<'+a_href+'>')
-            print('>', parsed[3].replace('<', '\<'))
+            print('>', md_escape_text(parsed[3]))
         print()
 
 
