@@ -83,6 +83,7 @@ def parse_soup(soup):
     # Return based on how many links we parsed
     if len(main_links) == 1:
         a = main_links[0]
+        print("---", a)
         # Work on shortening the displayed text for the url
         a_href = a['href']
         # a_text = a.get_text() # Is the text inside the link ever useful?
@@ -114,7 +115,8 @@ def get_daily_boosts(acc_id: str, my_date, max_id: str = ''):
         return
     
     json = req.json()
-    one_day_before = my_date - timedelta(days=1)
+    # TODO return to 1 day after testing
+    one_day_before = my_date - timedelta(days=4)
     dates = [datetime.fromisoformat(x['created_at']).date() for x in json]
     used = [e for d, e in zip(dates, json) 
             if d < my_date and d >= one_day_before and e['reblog'] is not None]
