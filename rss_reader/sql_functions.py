@@ -15,7 +15,7 @@ def namedtuple_factory(cursor, row):
 
 # source: type, url, status
 # fetch: source_id, dbtime, stime, status
-# item: fetch_id, url, title, author, summary, status
+# item: fetch_id, url, title, author, content, status
 # note: item_id, tag, content, status
 
 # source type: rss, mastodon, 
@@ -52,7 +52,7 @@ def mk_fresh(con):
     );
     ''')
 
-    # item: fetch_id, url, title, author, summary, status
+    # item: fetch_id, url, title, author, content, status
     cur.execute('DROP TABLE IF EXISTS item;')
     cur.execute('''
     CREATE TABLE item (
@@ -61,7 +61,7 @@ def mk_fresh(con):
         url TEXT NOT NULL,
         title TEXT NOT NULL,
         author TEXT NOT NULL,
-        summary TEXT NOT NULL,
+        content TEXT NOT NULL,
         stime INTEGER,
         dbtime INTEGER DEFAULT (unixepoch()) NOT NULL,
         status INTEGER DEFAULT (1) NOT NULL,
@@ -94,10 +94,10 @@ def add_fetch(con, source_id: int, status: int, stime: int | None):
     con.commit()
     res = cur.execute('SELECT fetch_id FROM fetch WHERE rowid = last_insert_rowid()').fetchone()
     return res[0]
-def add_item(con, fetch_id: int, url: str, title: str, author: str, summary: str):
+def add_item(con, fetch_id: int, url: str, title: str, author: str, content: str):
     cur = con.cursor()
-    cur.execute('INSERT INTO item (fetch_id, url, title, author, summary) VALUES (?, ?, ?, ?, ?)', 
-                (fetch_id, url, title, author, summary))
+    cur.execute('INSERT INTO item (fetch_id, url, title, author, content) VALUES (?, ?, ?, ?, ?)', 
+                (fetch_id, url, title, author, content))
     con.commit()
     res = cur.execute('SELECT item_id FROM item WHERE rowid = last_insert_rowid()').fetchone()
     return res[0]
@@ -125,7 +125,7 @@ def get_items(con, n:int = 10):
     cur.row_factory = namedtuple_factory
     # ORDER BY DESC dbtime 
     return cur.execute('''
-        SELECT item_id, fetch_id, url, title, author, summary, status 
+        SELECT item_id, fetch_id, url, title, author, content, status 
         FROM item WHERE status = 1 LIMIT ?
     ''', (n, )).fetchall()
 
@@ -149,6 +149,6 @@ def run_fetch(con, source_id: int):
 
     # Add items
     for entry in feed.entries:
-        add_item(con, fetch_id, entry.id, entry.title, entry.author, entry.summary)
+        add_item(con, fetch_id, entry.id, entry.title, entry.author, entry.content[0].value)
     
     return fetch_id

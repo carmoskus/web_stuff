@@ -28,7 +28,24 @@ parsed_list = [feedparser.parse(x) for x in feed_list]
 # fetch utime
 [int(time.mktime(x.feed.updated_parsed)) for x in parsed_list]
 
-[x.entries[0].keys() for x in parsed_list]
+print("\n\n".join(f"{i}\t" + str(x.entries[0].keys()) for i,x in enumerate(parsed_list)))
+print("\n\n".join(f"{i}\t" + str(x.entries[0].get('content')) for i,x in enumerate(parsed_list)))
+print("\n\n".join(f"{i}\t" + str(x.entries[0].summary_detail.value) for i,x in enumerate(parsed_list)))
+
+parsed_list[4].entries[0].keys()
+
+parsed_list[0].entries[0].content[0].value[:999]
+parsed_list[0].entries[0].summary_detail.value[:999]
+
+parsed_list[1].entries[0].content[0].value[:999]
+parsed_list[1].entries[0].summary_detail.value[:999]
+
+parsed_list[2].entries[0].content[0].value[:999]
+parsed_list[2].entries[0].summary_detail.value[:999]
+
+parsed_list[3].entries[0].content[0].value[:999]
+parsed_list[3].entries[0].summary_detail.value[:999]
+
 # item url
 [x.entries[0].id for x in parsed_list]
 
