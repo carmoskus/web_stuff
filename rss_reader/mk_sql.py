@@ -14,6 +14,8 @@ my.mk_fresh(con)
 
 feed_list = [
     "https://pluralistic.net/feed/",
+    "https://www.penny-arcade.com/feed",
+    "https://xkcd.com/rss.xml",
     "https://www.lawdork.com/feed",
     "https://talkingpointsmemo.com/edblog/feed",
     "https://digbysblog.net/feed/",
@@ -25,3 +27,7 @@ print(new_sources)
 reload(my)
 for source_id in new_sources:
     my.run_fetch(con, source_id)
+
+#
+a = my.get_items(con)
+b = my.get_items_distinct(con)

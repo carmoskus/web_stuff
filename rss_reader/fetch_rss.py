@@ -9,6 +9,8 @@ import sql_functions as my
 
 feed_list = [
     "https://pluralistic.net/feed/",
+    "https://www.penny-arcade.com/feed",
+    "https://xkcd.com/rss.xml",
     "https://www.lawdork.com/feed",
     # "https://talkingpointsmemo.com/feed",
     "https://talkingpointsmemo.com/edblog/feed",
@@ -30,12 +32,13 @@ parsed_list = [feedparser.parse(x) for x in feed_list]
 
 print("\n\n".join(f"{i}\t" + str(x.entries[0].keys()) for i,x in enumerate(parsed_list)))
 print("\n\n".join(f"{i}\t" + str(x.entries[0].get('content')) for i,x in enumerate(parsed_list)))
+print("\n\n".join(f"{i}\t" + str(len(x.entries[0].get('content', []))) for i,x in enumerate(parsed_list)))
 print("\n\n".join(f"{i}\t" + str(x.entries[0].summary_detail.value) for i,x in enumerate(parsed_list)))
 
 parsed_list[4].entries[0].keys()
 
 parsed_list[0].entries[0].content[0].value[:999]
-parsed_list[0].entries[0].summary_detail.value[:999]
+parsed_list[0].entries[0].summary[:999]
 
 parsed_list[1].entries[0].content[0].value[:999]
 parsed_list[1].entries[0].summary_detail.value[:999]

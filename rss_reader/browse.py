@@ -18,7 +18,7 @@ def sel_reset():
 
 def pull_recent(last_refresh_time):
     # Fetch ten most recent entries
-    return tuple(my.get_items(con, 10))
+    return tuple(my.get_items_distinct(con, 10))
 
 # Print
 st.set_page_config(layout = "wide")
@@ -31,8 +31,20 @@ st.session_state.last_refresh_time
 st.button("Refresh", on_click=sel_reset, key="refresh")
 
 st.session_state.entries = pull_recent(st.session_state.last_refresh_time)
+
+seen_sources = set()
+
 for entry in st.session_state.entries:
-   st.subheader(entry.title)
-   st.text(entry.author)
-   st.text(entry.url)
-   st.code(entry.content, language=None)
+  if entry.source_id in seen_sources:
+    continue
+  seen_sources.add(entry.source_id)
+
+  #  st.subheader(entry.title)
+  with st.expander(entry.author + " - " + entry.title):
+    st.text(entry.author)
+    st.text(entry.url)
+    if st.checkbox("View Source", key=f"vs{entry.item_id}"):
+      st.code(entry.content, language=None)
+    else:
+      #  st.write(entry.content, unsafe_allow_html=True)
+      st.html(entry.content)

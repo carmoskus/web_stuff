@@ -125,8 +125,24 @@ def get_items(con, n:int = 10):
     cur.row_factory = namedtuple_factory
     # ORDER BY DESC dbtime 
     return cur.execute('''
-        SELECT item_id, fetch_id, url, title, author, content, status 
-        FROM item WHERE status = 1 LIMIT ?
+        SELECT i.item_id, i.fetch_id, f.source_id, i.url, i.title, i.author, i.content, i.status 
+        FROM item i INNER JOIN fetch f ON f.fetch_id = i.fetch_id 
+        WHERE i.status = 1
+        ORDER BY i.item_id DESC
+        LIMIT ?
+    ''', (n, )).fetchall()
+
+def get_items_distinct(con, n:int = 10):
+    cur = con.cursor()
+    cur.row_factory = namedtuple_factory
+    # ORDER BY DESC dbtime 
+    return cur.execute('''
+        SELECT i.item_id, i.fetch_id, f.source_id, i.url, i.title, i.author, i.content, i.status 
+        FROM item i INNER JOIN fetch f ON f.fetch_id = i.fetch_id 
+        WHERE i.status = 1
+        GROUP BY f.source_id HAVING i.item_id = MAX(i.item_id)
+        ORDER BY i.item_id DESC
+        LIMIT ?
     ''', (n, )).fetchall()
 
 def run_fetch(con, source_id: int):
@@ -148,7 +164,10 @@ def run_fetch(con, source_id: int):
     fetch_id = add_fetch(con, source_id, 1, stime)
 
     # Add items
-    for entry in feed.entries:
-        add_item(con, fetch_id, entry.id, entry.title, entry.author, entry.content[0].value)
+    for entry in feed.entries[::-1]:
+        content = entry.summary
+        if len(entry.get("content", [])) > 0:
+            content = "\n".join(x.value for x in entry.content)
+        add_item(con, fetch_id, entry.id, entry.title, entry.get('author', ''), content)
     
     return fetch_id
