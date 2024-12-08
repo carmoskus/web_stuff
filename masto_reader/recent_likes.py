@@ -146,22 +146,26 @@ def md_escape_text(parsed_string: str):
         '*', '\*')
 
 # --- MAIN
+n_days = 3
+res_dates = [(datetime.now().date() - timedelta(days=i)).strftime("%Y-%m-%d") for i in range(n_days)]
 res_list = [get_daily_boosts('111183843398906311', datetime.now().date() - timedelta(days=i))
-            for i in range(2)]
+            for i in range(n_days)]
 
-for i, res in enumerate(res_list):
-    print(i, "---")
-    for parsed in res[::-1]:
-        if parsed[1] == 0:
-            print(parsed[0])
-            print('>', md_escape_text(parsed[2]))
-        elif parsed[1] == 1:
-            print(parsed[0])
-            print('<'+parsed[2]+'>')
-            print('>', md_escape_text(parsed[3]))
-        else:
-            print(parsed[0])
-            for a_href in parsed[2]:
-                print('<'+a_href+'>')
-            print('>', md_escape_text(parsed[3]))
-        print()
+for d, res in zip(res_dates, res_list):
+    print(d, "---")
+    fn = f"Generated/Mastodon-{d}.md"
+    with open(fn, 'w') as out:
+        for parsed in res[::-1]:
+            if parsed[1] == 0:
+                print(parsed[0], file=out)
+                print('>', md_escape_text(parsed[2]), file=out)
+            elif parsed[1] == 1:
+                print(parsed[0], file=out)
+                print('<'+parsed[2]+'>', file=out)
+                print('>', md_escape_text(parsed[3]), file=out)
+            else:
+                print(parsed[0], file=out)
+                for a_href in parsed[2]:
+                    print('<'+a_href+'>', file=out)
+                print('>', md_escape_text(parsed[3]), file=out)
+            print(file=out)
