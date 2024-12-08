@@ -168,6 +168,10 @@ def run_fetch(con, source_id: int):
         content = entry.summary
         if len(entry.get("content", [])) > 0:
             content = "\n".join(x.value for x in entry.content)
-        add_item(con, fetch_id, entry.id, entry.title, entry.get('author', ''), content)
+        
+        author = entry.get('author', '')
+        if author.startswith("by "):
+            author = author[:3]
+        add_item(con, fetch_id, entry.id, entry.title, author, content)
     
     return fetch_id
