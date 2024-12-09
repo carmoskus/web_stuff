@@ -42,7 +42,7 @@ for entry in st.session_state.entries:
   #  st.subheader(entry.title)
   with st.expander(entry.author + " - " + entry.title):
     st.text(entry.author)
-    st.text(entry.url)
+    st.markdown(entry.url)
     if st.checkbox("View Source", key=f"vs{entry.item_id}"):
       st.code(entry.content, language=None)
     else:
