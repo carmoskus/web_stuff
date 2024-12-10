@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>My test page</title>
+  </head>
+<body>
+
+{% if source_list %}
+    <p>Source List</p>
+    <ul>
+    {% for source in source_list %}
+        <li>{{ source.url }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No sources are available.</p>
+{% endif %}
+
+</body>
+</html>
