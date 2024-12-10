@@ -10,7 +10,7 @@
     <p>Source List</p>
     <ul>
     {% for source in source_list %}
-        <li>{{ source.url }}</li>
+        <li><a href="{% url 'source' source.id %}">{{ source.url }}</a></li>
     {% endfor %}
     </ul>
 {% else %}
