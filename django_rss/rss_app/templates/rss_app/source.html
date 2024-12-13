@@ -9,12 +9,28 @@
 <p>Source Details</p>
 <p>{{ source.url }}</p>
 
-<h3>Items</h4>
+<form action="{% url 'source' source.id %}fetch/" method="post">
+  {% csrf_token %}
+  <input type="submit" value="Fetch" />
+</form>
+
+<h3>Items</h3>
 {% for item in items %}
-<h4>{{item.title}}</h4>
-<p>{{item.url}}</p>
-<code>{{item.content}}</code>
-<p>{% autoescape off %}{{ item.content }}{% endautoescape %}</p>
+
+<h4><a href="{{item.url}}">{{item.title}}</a></h4>
+{% if item.author|length > 1 %}
+<p>{{ item.author }}</p>
+{% endif %}
+
+{% if item.content|length < 500 %}
+
+{% comment %}<code>{{item.content}}</code>{% endcomment %}
+
+<p>{% autoescape off %}
+  {{ item.content }}
+{% endautoescape %}</p>
+{% endif %}
+
 {% endfor %}
 
 </body>
