@@ -48,12 +48,14 @@ def fetch(request, source_id):
 
         # my_date = parse_datetime(entry.published)
 
-        obj = Item(source=source, 
-                url=entry.id, 
-                title=entry.title, 
-                author=author, 
-                content=content,
-                pub_date=my_date)
+        obj = Item(
+            source = source,
+            guid = entry.id, 
+            url = entry.link, 
+            title = entry.title, 
+            author = author, 
+            content = content,
+            pub_date = my_date)
         obj.save()
 
     return HttpResponseRedirect(reverse("source", args=(source.id,)))

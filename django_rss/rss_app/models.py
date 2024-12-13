@@ -9,7 +9,8 @@ class Source(models.Model):
 
 class Item(models.Model):
     source = models.ForeignKey(Source, on_delete=models.SET_NULL, null=True)
-    url = models.URLField(max_length=200, unique=True)
+    guid = models.CharField(max_length=200)
+    url = models.URLField(max_length=200)
     title = models.CharField(max_length=200)
     author = models.CharField(max_length=200)
     content = models.TextField()

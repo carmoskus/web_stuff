@@ -21,6 +21,7 @@
 <h4><a href="{{item.url}}">{{item.title}}</a></h4>
 
 <p>{% if item.author|length > 1 %}{{ item.author }} - {% endif %}{{ item.pub_date }}</p>
+<p>{{ item.guid }}</p>
 
 {% if item.content|length < 500 %}
 <p>{% autoescape off %}
