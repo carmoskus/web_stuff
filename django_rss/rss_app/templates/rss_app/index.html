@@ -7,15 +7,21 @@
 <body>
 
 {% if source_list %}
-    <p>Source List</p>
-    <ul>
-    {% for source in source_list %}
-        <li><a href="{% url 'source' source.id %}">{{ source.url }}</a></li>
-    {% endfor %}
-    </ul>
+  <p>Source List</p>
+  <ul>
+  {% for source in source_list %}
+    <li><a href="{% url 'source' source.id %}">{{ source.url }}</a></li>
+  {% endfor %}
+  </ul>
 {% else %}
-    <p>No sources are available.</p>
+  <p>No sources are available.</p>
 {% endif %}
+
+<form action="{% url 'add' %}" method="post">
+  {% csrf_token %}
+  <input type="text" name="newurl" id="newurl" />
+  <input type="submit" value="Add source" />
+</form>
 
 </body>
 </html>

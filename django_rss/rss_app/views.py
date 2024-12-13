@@ -44,3 +44,11 @@ def fetch(request, source_id):
         obj.save()
 
     return HttpResponseRedirect(reverse("source", args=(source.id,)))
+
+def add_source(request):
+    newurl = request.POST["newurl"]
+
+    source = Source(url=newurl)
+    source.save()
+
+    return HttpResponseRedirect(reverse("index"))

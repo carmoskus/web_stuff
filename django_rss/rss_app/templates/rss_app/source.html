@@ -9,14 +9,14 @@
 <p>Source Details</p>
 <p>{{ source.url }}</p>
 
-<form action="{% url 'source' source.id %}fetch/" method="post">
+<form action="{% url 'fetch' source.id %}" method="post">
   {% csrf_token %}
   <input type="submit" value="Fetch" />
 </form>
 
 <h3>Items</h3>
 {% for item in items %}
-
+<hr/>
 <h4><a href="{{item.url}}">{{item.title}}</a></h4>
 {% if item.author|length > 1 %}
 <p>{{ item.author }}</p>
