@@ -9,5 +9,13 @@
 <p>Source Details</p>
 <p>{{ source.url }}</p>
 
+<h3>Items</h4>
+{% for item in items %}
+<h4>{{item.title}}</h4>
+<p>{{item.url}}</p>
+<code>{{item.content}}</code>
+<p>{% autoescape off %}{{ item.content }}{% endautoescape %}</p>
+{% endfor %}
+
 </body>
 </html>
