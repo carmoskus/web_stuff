@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404
 # Create your views here.
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.html import escape
+from django.utils.dateparse import parse_datetime
 from django.urls import reverse
 
 from .models import Source, Item
@@ -22,6 +23,10 @@ def source(request, source_id):
 
 def fetch(request, source_id):
     source = get_object_or_404(Source, pk=source_id)
+
+    # Delete old items
+    Item.objects.filter(source=source).delete()
+
     feed = feedparser.parse(source.url)
     if feed.bozo:
         return HttpResponse(status=500)
@@ -35,12 +40,20 @@ def fetch(request, source_id):
         if author.startswith("by "):
             author = author[:3]
 
+        if entry.published_parsed.tm_gmtoff is not None:
+            tz = datetime.timezone(datetime.timedelta(seconds=entry.published_parsed.tm_gmtoff))
+        else:
+            tz = datetime.timezone(datetime.timedelta(seconds=0))
+        my_date = datetime.datetime(*entry.published_parsed[:6], tzinfo=tz)
+
+        # my_date = parse_datetime(entry.published)
+
         obj = Item(source=source, 
                 url=entry.id, 
                 title=entry.title, 
                 author=author, 
                 content=content,
-                pub_date=datetime.datetime.fromtimestamp(time.mktime(entry.published_parsed)))
+                pub_date=my_date)
         obj.save()
 
     return HttpResponseRedirect(reverse("source", args=(source.id,)))

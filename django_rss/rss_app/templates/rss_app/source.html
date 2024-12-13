@@ -5,6 +5,7 @@
     <title>My test page</title>
   </head>
 <body>
+<p><a href="{% url 'index' %}">Top</a></p>
 
 <p>Source Details</p>
 <p>{{ source.url }}</p>
@@ -18,14 +19,10 @@
 {% for item in items %}
 <hr/>
 <h4><a href="{{item.url}}">{{item.title}}</a></h4>
-{% if item.author|length > 1 %}
-<p>{{ item.author }}</p>
-{% endif %}
+
+<p>{% if item.author|length > 1 %}{{ item.author }} - {% endif %}{{ item.pub_date }}</p>
 
 {% if item.content|length < 500 %}
-
-{% comment %}<code>{{item.content}}</code>{% endcomment %}
-
 <p>{% autoescape off %}
   {{ item.content }}
 {% endautoescape %}</p>
