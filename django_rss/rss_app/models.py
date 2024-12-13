@@ -13,8 +13,8 @@ class Item(models.Model):
     title = models.CharField(max_length=200)
     author = models.CharField(max_length=200)
     content = models.TextField()
-    pub_date = models.DateTimeField()
+    pub_date = models.DateTimeField() # Switch to time to match feedparser output?
 
     def __str__(self):
-        return self.url
+        return self.url + f" {self.pub_date} {len(self.author)}/{len(self.title)}/{len(self.content)}"
     
