@@ -17,7 +17,7 @@ def index(request):
 
 def source(request, source_id):
     source = get_object_or_404(Source, pk=source_id)
-    items = Item.objects.filter(source=source)
+    items = Item.objects.filter(source=source).order_by("-pub_date")
     context = {"source": source, "items": items}
     return render(request, "rss_app/source.html", context)
 
@@ -25,7 +25,7 @@ def fetch(request, source_id):
     source = get_object_or_404(Source, pk=source_id)
 
     # Delete old items
-    Item.objects.filter(source=source).delete()
+    # Item.objects.filter(source=source).delete()
 
     feed = feedparser.parse(source.url)
     if feed.bozo:
@@ -38,7 +38,7 @@ def fetch(request, source_id):
 
         author = entry.get('author', '')
         if author.startswith("by "):
-            author = author[:3]
+            author = author[3:]
 
         if entry.published_parsed.tm_gmtoff is not None:
             tz = datetime.timezone(datetime.timedelta(seconds=entry.published_parsed.tm_gmtoff))
@@ -46,18 +46,21 @@ def fetch(request, source_id):
             tz = datetime.timezone(datetime.timedelta(seconds=0))
         my_date = datetime.datetime(*entry.published_parsed[:6], tzinfo=tz)
 
-        # my_date = parse_datetime(entry.published)
-
-        obj = Item(
+        Item.objects.get_or_create(
             source = source,
-            guid = entry.id, 
-            url = entry.link, 
-            title = entry.title, 
-            author = author, 
-            content = content,
-            pub_date = my_date)
-        obj.save()
+            guid = entry.id,
+            defaults = {
+                "source": source,
+                "guid": entry.id, 
+                "url": entry.link, 
+                "title": entry.title, 
+                "author": author, 
+                "content": content,
+                "pub_date": my_date,
+            })
 
+    source.last_fetched = datetime.datetime.now()
+    source.save()
     return HttpResponseRedirect(reverse("source", args=(source.id,)))
 
 def add_source(request):

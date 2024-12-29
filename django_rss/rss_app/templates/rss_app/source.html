@@ -9,6 +9,7 @@
 
 <p>Source Details</p>
 <p>{{ source.url }}</p>
+<p>{{ source.last_fetched }}</p>
 
 <form action="{% url 'fetch' source.id %}" method="post">
   {% csrf_token %}
