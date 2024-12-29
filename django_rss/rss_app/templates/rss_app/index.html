@@ -9,18 +9,23 @@
   <p>Source List</p>
   <ul>
   {% for source in source_list %}
-    <li><a href="{% url 'source' source.id %}">{{ source.url }}</a></li>
+    <li><a href="{% url 'source' source.id %}">{{ source.url }}</a> {{source.last_fetched}}</li>
   {% endfor %}
   </ul>
 {% else %}
   <p>No sources are available.</p>
 {% endif %}
 
-<form action="{% url 'add' %}" method="post">
+<p><form action="{% url 'add' %}" method="post">
   {% csrf_token %}
   <input type="text" name="newurl" id="newurl" />
   <input type="submit" value="Add source" />
-</form>
+</form></p>
+
+<p><form action="{% url 'fetch_all' %}" method="post">
+  {% csrf_token %}
+  <input type="submit" value="Fetch All" />
+</form></p>
 
 </body>
 </html>

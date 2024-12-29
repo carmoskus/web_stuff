@@ -21,12 +21,7 @@ def source(request, source_id):
     context = {"source": source, "items": items}
     return render(request, "rss_app/source.html", context)
 
-def fetch(request, source_id):
-    source = get_object_or_404(Source, pk=source_id)
-
-    # Delete old items
-    # Item.objects.filter(source=source).delete()
-
+def fetch_source(request, source):
     feed = feedparser.parse(source.url)
     if feed.bozo:
         return HttpResponse(status=500)
@@ -59,9 +54,22 @@ def fetch(request, source_id):
                 "pub_date": my_date,
             })
 
-    source.last_fetched = datetime.datetime.now()
+    source.last_fetched = datetime.datetime.now(datetime.UTC)
     source.save()
     return HttpResponseRedirect(reverse("source", args=(source.id,)))
+
+def fetch_id(request, source_id):
+    source = get_object_or_404(Source, pk=source_id)
+    return fetch_source(request, source)
+
+def fetch_all(request):
+    sources = Source.objects.all()
+    sub_responses = [
+        fetch_source(request, source)
+        for source in sources
+        if datetime.datetime.now(datetime.UTC) - source.last_fetched > datetime.timedelta(hours=1)
+    ]
+    return HttpResponseRedirect(reverse("index"))
 
 def add_source(request):
     newurl = request.POST["newurl"]
