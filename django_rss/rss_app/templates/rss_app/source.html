@@ -8,7 +8,7 @@
 <p><a href="{% url 'index' %}">Top</a></p>
 
 <p>Source Details</p>
-<p>{{ source.url }}</p>
+<p><a href="{{ source.url }}">Title: {{ source.title }}</a></p>
 <p>{{ source.last_fetched }}</p>
 
 <form action="{% url 'fetch' source.id %}" method="post">

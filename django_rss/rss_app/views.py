@@ -21,10 +21,17 @@ def source(request, source_id):
     context = {"source": source, "items": items}
     return render(request, "rss_app/source.html", context)
 
+def timeline(request):
+    items = Item.objects.order_by('-pub_date')
+    return render(request, "rss_app/timeline.html", {"item_list": items})
+
 def fetch_source(request, source):
     feed = feedparser.parse(source.url)
     if feed.bozo:
         return HttpResponse(status=500)
+    
+    if feed.feed.get('title', "") != "":
+        source.title = feed.feed.title
 
     for entry in feed.entries:
         content = entry.summary

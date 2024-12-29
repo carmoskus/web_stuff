@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>My test page</title>
+  </head>
+<body>
+
+{% if item_list %}
+  <p>Item List</p>
+  <ul>
+  {% for item in item_list %}
+    <li><a href="{{ item.url }}">{{ item.title }}</a> - 
+        {% if item.author|length > 1 %}
+            {{ item.author }}
+        {% else %}
+            {{ item.source.title }}
+        {% endif %}
+    </li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <p>No items are available.</p>
+{% endif %}
+
+<p><form action="{% url 'add' %}" method="post">
+  {% csrf_token %}
+  <input type="text" name="newurl" id="newurl" />
+  <input type="submit" value="Add source" />
+</form></p>
+
+<p><form action="{% url 'fetch_all' %}" method="post">
+  {% csrf_token %}
+  <input type="submit" value="Fetch All" />
+</form></p>
+
+</body>
+</html>
