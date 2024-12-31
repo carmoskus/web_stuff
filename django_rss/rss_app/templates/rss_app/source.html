@@ -1,13 +1,6 @@
-<!doctype html>
-{% load static %}
-<html lang="en-US">
-  <head>
-    <meta charset="utf-8" />
-    <title>My test page</title>
-    <link rel="stylesheet" href="{% static 'rss_app/style.css' %}" />
-  </head>
-<body>
-<p><a href="{% url 'index' %}">Top</a></p>
+{% extends "rss_app/base.html" %}
+
+{% block content %}
 
 <p>Source Details</p>
 <p><a href="{{ source.url }}">Title: {{ source.title }}</a></p>
@@ -34,5 +27,4 @@
 
 {% endfor %}
 
-</body>
-</html>
+{% endblock %}

@@ -1,12 +1,7 @@
-<!doctype html>
-{% load static %}
-<html lang="en-US">
-  <head>
-    <meta charset="utf-8" />
-    <title>My test page</title>
-    <link rel="stylesheet" href="{% static 'rss_app/style.css' %}" />
-  </head>
-<body>
+{% extends "rss_app/base.html" %}
+
+{% block content %}
+
 {% if source_list %}
   <p>Source List</p>
   <ul>
@@ -29,5 +24,4 @@
   <input type="submit" value="Fetch All" />
 </form></p>
 
-</body>
-</html>
+{% endblock %}
