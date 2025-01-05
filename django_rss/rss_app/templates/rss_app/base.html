@@ -2,25 +2,27 @@
 {% load static %}
 <html lang="en-US">
   <head>
-    <meta charset="utf-8" />
-    <title>Base template</title>
-    <link rel="stylesheet" href="{% static 'rss_app/bootstrap.min.css' %}" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RSS template</title>
+    <link rel="stylesheet" href="{% static 'rss_app/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'rss_app/style.css' %}">
 
-    <link rel="stylesheet" href="{% static 'rss_app/style.css' %}" />
   </head>
 <body>
 
-
+<header class="border-bottom">
 <div id="header" class="container">
     <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-        <ul class="nav">
+        <ul class="nav col-12">
             <li><a class="nav-link" href="{% url 'timeline' %}">Timeline</a></li>
             <li><a class="nav-link" href="{% url 'index' %}">Sources</a></li>
         </ul>
     </div>
 </div>
+</header>
 
-<div id="content">
+<div id="content" class="container">
     {% block content %}{% endblock %}
 </div>
 

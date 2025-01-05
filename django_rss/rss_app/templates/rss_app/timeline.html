@@ -7,11 +7,13 @@
   <ul>
   {% for item in item_list %}
     <li><a href="{{ item.url }}">{{ item.title }}</a> - 
+      <a href="{% url 'source' item.source.id %}">
         {% if item.author|length > 1 %}
             {{ item.author }}
         {% else %}
             {{ item.source.title }}
         {% endif %}
+      </a>
     </li>
   {% endfor %}
   </ul>
