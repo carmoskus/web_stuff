@@ -4,19 +4,34 @@
 
 {% if item_list %}
   <p>Item List</p>
-  <ul>
+
+  <div class="accordion" id="accordionExample" style="max-width: 768px">
   {% for item in item_list %}
-    <li><a href="{{ item.url }}">{{ item.title }}</a> - 
-      <a href="{% url 'source' item.source.id %}">
-        {% if item.author|length > 1 %}
-            {{ item.author }}
-        {% else %}
-            {{ item.source.title }}
-        {% endif %}
-      </a>
-    </li>
+    <!-- New below -->
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter0 }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter0 }}">
+          {% comment %}
+          <a href="{{ item.url }}">{{ item.title }}</a> - 
+          <a href="{% url 'source' item.source.id %}">
+            {% if item.author|length > 1 %}
+                {{ item.author }}
+            {% else %}
+                {{ item.source.title }}
+            {% endif %}
+          </a>
+          {% endcomment %}
+          {{ item.source.title }}: {{ item.title }}
+        </button>
+      </h2>
+      <div id="collapse{{ forloop.counter0 }}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+        <div class="accordion-body"><div class="container container-sm">
+          {% autoescape off %}{{ item.content }}{% endautoescape %}
+        </div></div>
+      </div>
+    </div>
   {% endfor %}
-  </ul>
+</div>
 {% else %}
   <p>No items are available.</p>
 {% endif %}

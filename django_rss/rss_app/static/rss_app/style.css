@@ -3,7 +3,7 @@ blockquote {
     border-left: solid 3px #27292B;
 }
 
-figure img {
+img {
     max-width: 100%;
     height: auto;
 }
