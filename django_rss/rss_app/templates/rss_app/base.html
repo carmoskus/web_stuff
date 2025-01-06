@@ -17,6 +17,7 @@
         <ul class="nav col-12">
             <li><a class="nav-link" href="{% url 'timeline' %}">Timeline</a></li>
             <li><a class="nav-link" href="{% url 'index' %}">Sources</a></li>
+            <li><a class="nav-link" href="{% url 'fulltime' %}">Complete</a></li>
         </ul>
     </div>
 </div>
@@ -26,6 +27,7 @@
     {% block content %}{% endblock %}
 </div>
 
+<script src="{% static 'rss_app/jquery-3.7.1.min.js' %}"></script>
 <script src="{% static 'rss_app/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>

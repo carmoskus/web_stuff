@@ -22,6 +22,10 @@ def source(request, source_id):
     return render(request, "rss_app/source.html", context)
 
 def timeline(request):
+    items = Item.objects.filter(status=0).order_by('-pub_date')
+    return render(request, "rss_app/timeline.html", {"item_list": items})
+
+def fulltime(request):
     items = Item.objects.order_by('-pub_date')
     return render(request, "rss_app/timeline.html", {"item_list": items})
 
