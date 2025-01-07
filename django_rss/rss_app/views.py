@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.utils.html import escape
 from django.utils.dateparse import parse_datetime
 from django.urls import reverse
@@ -89,3 +89,9 @@ def add_source(request):
     source.save()
 
     return HttpResponseRedirect(reverse("index"))
+
+def mark_read(request, item_id):
+    item = get_object_or_404(Item, pk=item_id)
+    item.status = 1
+    item.save()
+    return JsonResponse({"status": "success", "item_id": item_id})

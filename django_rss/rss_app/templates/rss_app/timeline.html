@@ -35,6 +35,9 @@
             const myModal = document.querySelector('#seenBox{{ forloop.counter }}')
             myModal.addEventListener('change', event => {
               console.log('Foo{{ forloop.counter }}')
+              $.post("{% url 'mark_read' item.id %}", {
+                csrfmiddlewaretoken: "{{ csrf_token }}"
+              })
               return event.preventDefault() // stops modal from being shown
             })
           })
