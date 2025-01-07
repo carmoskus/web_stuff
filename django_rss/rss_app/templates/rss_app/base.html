@@ -7,7 +7,7 @@
     <title>RSS template</title>
     <link rel="stylesheet" href="{% static 'rss_app/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'rss_app/style.css' %}">
-
+    <script src="{% static 'rss_app/jquery-3.7.1.min.js' %}"></script>
   </head>
 <body>
 
@@ -27,7 +27,6 @@
     {% block content %}{% endblock %}
 </div>
 
-<script src="{% static 'rss_app/jquery-3.7.1.min.js' %}"></script>
 <script src="{% static 'rss_app/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>

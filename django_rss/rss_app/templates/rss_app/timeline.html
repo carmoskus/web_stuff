@@ -10,7 +10,7 @@
     <!-- New below -->
     <div class="accordion-item">
       <h2 class="accordion-header">
-        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter0 }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter0 }}">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
           {% comment %}
           <a href="{{ item.url }}">{{ item.title }}</a> - 
           <a href="{% url 'source' item.source.id %}">
@@ -24,7 +24,22 @@
           {{ item.source.title }}: {{ item.title }}
         </button>
       </h2>
-      <div id="collapse{{ forloop.counter0 }}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+    <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="seenBox{{ forloop.counter }}">
+        <label class="form-check-label" for="seenBox{{ forloop.counter }}">
+          Read
+        </label>
+        <script>
+          $(function() {
+            const myModal = document.querySelector('#seenBox{{ forloop.counter }}')
+            myModal.addEventListener('change', event => {
+              console.log('Foo{{ forloop.counter }}')
+              return event.preventDefault() // stops modal from being shown
+            })
+          })
+        </script>
+      </div>
         <div class="accordion-body"><div class="container container-sm">
           {% autoescape off %}{{ item.content }}{% endautoescape %}
         </div></div>
