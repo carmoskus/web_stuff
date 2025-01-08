@@ -3,7 +3,11 @@ blockquote {
     border-left: solid 3px #27292B;
 }
 
-img {
+div.rss-item img {
     max-width: 100%;
     height: auto;
+}
+
+div.rss-item div.simplesocialbuttons {
+    display: none;
 }

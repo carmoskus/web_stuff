@@ -95,3 +95,8 @@ def mark_read(request, item_id):
     item.status = 1
     item.save()
     return JsonResponse({"status": "success", "item_id": item_id})
+def mark_unread(request, item_id):
+    item = get_object_or_404(Item, pk=item_id)
+    item.status = 0
+    item.save()
+    return JsonResponse({"status": "success", "item_id": item_id})
