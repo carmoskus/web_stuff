@@ -18,7 +18,7 @@ def index(request):
 def source(request, source_id):
     source = get_object_or_404(Source, pk=source_id)
     items = Item.objects.filter(source=source).order_by("-pub_date")
-    context = {"source": source, "items": items}
+    context = {"source": source, "item_list": items}
     return render(request, "rss_app/source.html", context)
 
 def timeline(request):
