@@ -36,6 +36,8 @@ def fetch_source(request, source):
     
     if feed.feed.get('title', "") != "":
         source.title = feed.feed.title
+    if feed.feed.get('subtitle', "") != "":
+        source.description = feed.feed.subtitle
 
     for entry in feed.entries:
         content = entry.summary

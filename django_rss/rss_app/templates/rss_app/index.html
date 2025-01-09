@@ -3,12 +3,23 @@
 {% block content %}
 
 {% if source_list %}
-  <p>Source List</p>
-  <ul>
-  {% for source in source_list %}
-    <li><a href="{% url 'source' source.id %}">{{ source.url }}</a> {{source.last_fetched}}</li>
-  {% endfor %}
-  </ul>
+<p>Source List</p>
+
+{% for source in source_list %}
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">{{ source.title }}</h5>
+    <p class="card-text">
+      {{ source.last_fetched }} <br/>
+      {{ source.url }}<br/>
+      {{ source.description }}
+    </p>
+    <a href="{% url 'source' source.id %}" class="card-link">Page</a>
+    <a href="{{ source.url }}" class="card-link">Source</a>
+  </div>
+</div>
+{% endfor %}
+
 {% else %}
   <p>No sources are available.</p>
 {% endif %}
