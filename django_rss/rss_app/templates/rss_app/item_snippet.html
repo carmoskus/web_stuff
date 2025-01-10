@@ -1,21 +1,9 @@
-<div class="accordion-item">
-    <h2 class="accordion-header">
-        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
-        {% comment %}
-        <a href="{{ item.url }}">{{ item.title }}</a> - 
-        <a href="{% url 'source' item.source.id %}">
-            {% if item.author|length > 1 %}
-                {{ item.author }}
-            {% else %}
-                {{ item.source.title }}
-            {% endif %}
-        </a>
-        {% endcomment %}
-        {{ item.source.title }}: {{ item.title }}
-        </button>
-    </h2>
-    <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-        <div class="accordion-body rss-item">
+<div class="card">
+<div class="card-body p-2">
+    <button class="card-title btn btn-outline-secondary d-block w-100 text-start" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+        {{ item.source.title }}:<br/>{{ item.title }}
+    </button>
+    <div id="collapse{{ forloop.counter }}" class="collapse rss-item">
         <div><a href="{{ item.url }}">{{item.pub_date}}</a></div>
         <div class="form-check">
             <input class="form-check-input" type="checkbox" value="" id="seenBox{{ forloop.counter }}">
@@ -43,6 +31,6 @@
         <div class="container">
             {% autoescape off %}{{ item.content }}{% endautoescape %}
         </div>
-        </div>
     </div>
+</div>
 </div>
