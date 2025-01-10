@@ -22,7 +22,8 @@ def source(request, source_id):
     return render(request, "rss_app/source.html", context)
 
 def timeline(request):
-    items = Item.objects.filter(status=0).order_by('-pub_date')
+    oldest_date = datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=7)
+    items = Item.objects.filter(status=0).filter(pub_date__gt=oldest_date).order_by('-pub_date')
     return render(request, "rss_app/timeline.html", {"item_list": items})
 
 def fulltime(request):
