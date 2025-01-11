@@ -11,13 +11,9 @@
   <input type="submit" value="Fetch" />
 </form>
 
-<div class="accordion" id="accordionExample" style="max-width: 768px">
-
 <h3>Items</h3>
 {% for item in item_list %}
   {% include "rss_app/item_snippet.html" %}
 {% endfor %}
-
-</div>
 
 {% endblock %}
