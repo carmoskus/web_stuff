@@ -9,6 +9,7 @@ urlpatterns = [
     path("<int:source_id>/", views.source, name="source"),
     
     path("<int:source_id>/fetch/", views.fetch_id, name="fetch"),
+    path("<int:source_id>/delete/", views.delete_id, name="delete"),
     path("fetch/", views.fetch_all, name="fetch_all"),
     path("add/", views.add_source, name="add"),
     path("api/item/<int:item_id>/mark_read/", views.mark_read, name="mark_read"),

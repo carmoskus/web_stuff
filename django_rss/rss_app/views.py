@@ -85,6 +85,13 @@ def fetch_all(request):
     ]
     return HttpResponseRedirect(reverse("index"))
 
+def delete_id(request, source_id):
+    source = get_object_or_404(Source, pk=source_id)
+    Item.objects.filter(source=source_id).delete()
+    source.delete()
+
+    return HttpResponseRedirect(reverse("index"))
+
 def add_source(request):
     newurl = request.POST["newurl"]
 
