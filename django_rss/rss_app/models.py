@@ -4,6 +4,7 @@ from django.db import models
 class Source(models.Model):
     url = models.URLField(max_length=200, unique=True)
     last_fetched = models.DateTimeField(null=True)
+    last_etag = models.TextField(default="")
     title = models.TextField(max_length=200, default="")
     description = models.TextField(max_length=999, default="")
     

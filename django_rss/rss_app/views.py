@@ -8,7 +8,7 @@ from django.urls import reverse
 
 from .models import Source, Item
 
-import feedparser, datetime, time
+import feedparser, datetime, requests
 
 def index(request):
     all_sources = Source.objects.all()
@@ -31,7 +31,12 @@ def fulltime(request):
     return render(request, "rss_app/timeline.html", {"item_list": items})
 
 def fetch_source(request, source):
-    feed = feedparser.parse(source.url)
+    if source.last_etag == "":
+        feed = feedparser.parse(source.url)
+    else:
+        feed = feedparser.parse(source.url, etag=source.last_etag)
+    if feed.status == 304:
+        return HttpResponseRedirect(reverse("source", args=(source.id,)))
     if feed.bozo:
         return HttpResponse(status=500)
     
@@ -69,6 +74,10 @@ def fetch_source(request, source):
             })
 
     source.last_fetched = datetime.datetime.now(datetime.UTC)
+    if feed.get('etag') is not None:
+        source.last_etag = feed.etag 
+    else:
+        source.last_etag = ""
     source.save()
     return HttpResponseRedirect(reverse("source", args=(source.id,)))
 
