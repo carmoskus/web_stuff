@@ -25,3 +25,24 @@ for x in res:
 for x in res:
     print(x.headers.get("Last-Modified"))
 
+
+requests.head(
+    feed_list[4],
+    headers = {
+        'If-Modified-Since': 'Thu, 23 Jan 2025 19:28:38 GMT'
+    }
+)
+
+requests.head(
+    feed_list[2],
+    headers = {
+        'If-Modified-Since': 'Thu, 23 Jan 2025 21:28:38 GMT'
+    }
+)
+
+requests.head(
+    feed_list[2],
+    headers = {
+        'If-None-Match': 'W/"6791739e-8c7"'
+    }
+)
