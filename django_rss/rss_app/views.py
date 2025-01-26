@@ -22,7 +22,7 @@ def source(request, source_id):
     return render(request, "rss_app/source.html", context)
 
 def timeline(request):
-    oldest_date = datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=7)
+    oldest_date = datetime.datetime.now(datetime.UTC) - datetime.timedelta(days=4)
     items = Item.objects.filter(status=0).filter(pub_date__gt=oldest_date).order_by('-pub_date')
     return render(request, "rss_app/timeline.html", {"item_list": items})
 
@@ -107,7 +107,7 @@ def add_source(request):
     source = Source(url=newurl)
     source.save()
 
-    return HttpResponseRedirect(reverse("index"))
+    return HttpResponseRedirect(reverse("source", args=(source.id,)))
 
 def mark_read(request, item_id):
     item = get_object_or_404(Item, pk=item_id)

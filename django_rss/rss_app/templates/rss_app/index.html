@@ -2,6 +2,17 @@
 
 {% block content %}
 
+<p><form action="{% url 'add' %}" method="post">
+  {% csrf_token %}
+  <input type="text" name="newurl" id="newurl" />
+  <input type="submit" value="Add source" />
+</form></p>
+
+<p><form action="{% url 'fetch_all' %}" method="post">
+  {% csrf_token %}
+  <input type="submit" value="Fetch All" />
+</form></p>
+
 {% if source_list %}
 <p>Source List</p>
 
@@ -23,16 +34,5 @@
 {% else %}
   <p>No sources are available.</p>
 {% endif %}
-
-<p><form action="{% url 'add' %}" method="post">
-  {% csrf_token %}
-  <input type="text" name="newurl" id="newurl" />
-  <input type="submit" value="Add source" />
-</form></p>
-
-<p><form action="{% url 'fetch_all' %}" method="post">
-  {% csrf_token %}
-  <input type="submit" value="Fetch All" />
-</form></p>
 
 {% endblock %}
