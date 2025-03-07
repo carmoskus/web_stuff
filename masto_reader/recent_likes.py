@@ -138,19 +138,22 @@ def get_daily_boosts(acc_id: str, my_date, max_id: str = ''):
     return results + get_daily_boosts(acc_id, my_date, new_max_id)
 
 def md_escape_text(parsed_string: str):
-    return parsed_string.replace(
-        '<', '\<').replace(
-        '#', '\#').replace(
-        '[', '\[').replace(
-        '(', '\(').replace(
-        '*', '\*')
+    return (
+        parsed_string
+        .replace('<', '\<')
+        .replace('#', '\#')
+        .replace('[', '\[')
+        .replace('(', '\(')
+        .replace('*', '\*')
+        .encode('ascii', 'ignore')
+        .decode()
+    )
 
 # --- MAIN
 n_days = 3
 res_dates = [(datetime.now().date() - timedelta(days=i)).strftime("%Y-%m-%d") for i in range(n_days)]
 res_list = [get_daily_boosts('111183843398906311', datetime.now().date() - timedelta(days=i))
             for i in range(n_days)]
-
 for d, res in zip(res_dates, res_list):
     print(d, "---")
     fn = f"Generated/Mastodon-{d}.md"
